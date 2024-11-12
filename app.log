@@ -1,0 +1,3 @@
+2024-11-12 12:20:20,190 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2024-11-12 12:20:24,049 - ec2_util - INFO - ElasticIP is created Successfully: 3.91.115.9
+2024-11-12 12:20:25,875 - ec2_util - INFO - ElasticIP is created Successfully: 52.70.8.123
