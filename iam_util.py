@@ -24,13 +24,13 @@ def create_iam_role():
                     RoleName='Redshift_All_Commands_Access_Role',
                     AssumeRolePolicyDocument=json.dumps(assume_role_policy)
                 )
-        logger.info('IAM role is successfully created: %s', response['Policy']['Arn'])
         role_arn = response['Role']['Arn']
+        logger.info('IAM role is successfully created: %s', role_arn)
 
     except iam_client.exceptions.EntityAlreadyExistsException:
         response = iam_client.get_role(RoleName='Redshift_All_Commands_Access_Role')
-        logger.warning('Role already exists: %s', response['Role']['Arn'])
-        role_arn = response['Role']['Arn']
+        role_arn = response['Role']['Arn']        
+        logger.warning('Role already exists: %s', role_arn)
 
     except Exception as e:
         logger.error('Error creating the role: %s', e)
