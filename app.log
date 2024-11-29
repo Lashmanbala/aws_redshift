@@ -1,3 +1,23 @@
 2024-11-12 12:20:20,190 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
 2024-11-12 12:20:24,049 - ec2_util - INFO - ElasticIP is created Successfully: 3.91.115.9
 2024-11-12 12:20:25,875 - ec2_util - INFO - ElasticIP is created Successfully: 52.70.8.123
+2024-11-14 08:19:46,612 - logging_config - WARNING - Role already exists: arn:aws:iam::872515260721:role/Redshift_All_Commands_Access_Role
+2024-11-14 08:19:46,986 - logging_config - INFO - Policy successfully attached to the role
+2024-11-14 08:20:56,803 - logging_config - WARNING - Role already exists: arn:aws:iam::872515260721:role/Redshift_All_Commands_Access_Role
+2024-11-14 08:20:57,184 - logging_config - INFO - Policy successfully attached to the role
+2024-11-14 08:24:46,647 - logging_config - WARNING - Role already exists: arn:aws:iam::872515260721:role/Redshift_All_Commands_Access_Role
+2024-11-14 08:24:47,264 - logging_config - INFO - Policy successfully attached to the role
+2024-11-14 08:28:03,440 - logging_config - WARNING - Role already exists: arn:aws:iam::872515260721:role/Redshift_All_Commands_Access_Role
+2024-11-14 08:28:03,859 - logging_config - INFO - Policy successfully attached to the role
+2024-11-28 17:42:27,385 - logging_config - INFO - ElasticIP is created Successfully: 54.174.124.10
+2024-11-28 17:42:34,230 - logging_config - ERROR - Error creating the role: 'Policy'
+2024-11-28 17:42:34,649 - logging_config - INFO - Policy successfully attached to the role
+2024-11-28 17:55:41,057 - logging_config - INFO - IAM role is successfully created: arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role
+2024-11-28 17:55:41,535 - logging_config - INFO - Policy successfully attached to the role
+2024-11-28 18:19:39,136 - logging_config - INFO - Secret rds_secret created successfully.
+2024-11-28 18:19:45,500 - logging_config - ERROR - Error retrieving KMS key for secret: 'KmsKeyId'
+2024-11-28 18:26:57,107 - logging_config - ERROR - Error retrieving KMS key for secret: 0
+2024-11-28 18:34:14,845 - logging_config - ERROR - Error retrieving KMS key for secret: 'KmsKeyId'
+2024-11-28 18:35:55,131 - logging_config - INFO - kmsKeyId retrieved successfully
+2024-11-28 18:37:10,207 - logging_config - INFO - kmsKeyId retrieved successfully
+2024-11-29 07:03:19,571 - logging_config - INFO - kmsKeyId retrieved successfully
