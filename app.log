@@ -21,3 +21,10 @@
 2024-11-28 18:35:55,131 - logging_config - INFO - kmsKeyId retrieved successfully
 2024-11-28 18:37:10,207 - logging_config - INFO - kmsKeyId retrieved successfully
 2024-11-29 07:03:19,571 - logging_config - INFO - kmsKeyId retrieved successfully
+2024-11-29 07:24:38,234 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: The parameter ClusterIdentifier is not a valid identifier. Identifiers must begin with a letter; must contain only ASCII letters, digits, and hyphens; and must not end with a hyphen or contain two consecutive hyphens.
+2024-11-29 07:27:56,127 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: Number of nodes for cluster type multi-node must be greater than or equal to 2.
+2024-11-29 07:29:05,195 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidElasticIpFault) when calling the CreateCluster operation: The Elastic IP address 52.70.8.123 does not exist.
+2024-11-29 07:31:54,054 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: Invalid arn arn:aws:secretsmanager:us-east-1:585768170668:secret:redshift_secret-gh1lpX (Service: AWSKMS; Status Code: 400; Error Code: NotFoundException; Request ID: 2f6da51e-ad7c-41af-a5e4-1af524270794; Proxy: null)
+2024-11-29 07:41:17,506 - logging_config - INFO - kmsKeyId retrieved successfully
+2024-11-30 09:06:28,971 - logging_config - INFO - kmsKeyId retrieved successfully
+2024-11-30 09:20:50,273 - logging_config - INFO - KeyId retrieved successfully.

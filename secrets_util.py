@@ -24,17 +24,17 @@ def create_redshift_secret(secret_dict):
         logger.error(f"Error creating the secret: {e}")
 
 
-def get_kms_key_for_secret():
-    client = boto3.client('secretsmanager')
-    
+def get_kms_key_by_alias():
+    client = boto3.client('kms')
+
     try:
-        response = client.describe_secret(SecretId='redshift_secret')
-        time.sleep(5)    
-        kms_key_id = response['ARN']
-        logger.info('kmsKeyId retrieved successfully')
-        return kms_key_id
-    
+        response = client.list_aliases()
+        for alias in response['Aliases']:
+            if alias['AliasName'] == 'alias/aws/secretsmanager':
+                key_id = alias['TargetKeyId']
+                logger.info(f"KeyId retrieved successfully.")
+                return key_id
+
     except Exception as e:
-        logger.error(f"Error retrieving KMS key for secret: {e}")
-        raise
+        logger.error(f"Error getting the keyId: {e}")
 
