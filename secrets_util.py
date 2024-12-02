@@ -5,10 +5,12 @@ import time
 
 def create_redshift_secret(secret_dict):
     client = boto3.client('secretsmanager')
+
+    secret_name = 'redshift_secret'
     
     try:
         response = client.create_secret(
-            Name='redshift_secret',
+            Name=secret_name,
             Description='Secret for redshift database',
             SecretString=json.dumps(secret_dict)
         )
@@ -18,23 +20,22 @@ def create_redshift_secret(secret_dict):
         return response
     
     except client.exceptions.ResourceExistsException:
-        logger.warning(f"The secret '{response['Name']}' already exists.")
+        logger.warning(f"The secret '{secret_name}' already exists.")
 
     except Exception as e:
         logger.error(f"Error creating the secret: {e}")
 
 
-def get_kms_key_by_alias():
-    client = boto3.client('kms')
-
+def get_secret(secret_name='redshift_secret'):
+    client = boto3.client('secretsmanager')
+    
     try:
-        response = client.list_aliases()
-        for alias in response['Aliases']:
-            if alias['AliasName'] == 'alias/aws/secretsmanager':
-                key_id = alias['TargetKeyId']
-                logger.info(f"KeyId retrieved successfully.")
-                return key_id
-
+        response = client.get_secret_value(SecretId=secret_name)
+        raw_secret_string = response['SecretString']
+        corrected_secret_string = raw_secret_string.strip('"').replace("'", '"')
+        secret = json.loads(corrected_secret_string)
+        logger.info('Secret retreived successfully')
+        return secret
     except Exception as e:
-        logger.error(f"Error getting the keyId: {e}")
-
+        logger.exception("Failed to retrieve secret")
+        raise e
