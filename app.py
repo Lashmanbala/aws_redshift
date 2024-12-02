@@ -21,9 +21,9 @@ secret = get_secret()
 user_name = secret['username']
 password = secret['password']
 
-# elasticIP = '54.174.124.10'
-# iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
-# res = _create_cluster(elasticIP, iam_role_arn, user_name, password)
-# print(res)
+elasticIP = '54.174.124.10'
+iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+res = _create_cluster(elasticIP, iam_role_arn, user_name, password)
+print(res)
 
 

@@ -28,3 +28,55 @@
 2024-11-29 07:41:17,506 - logging_config - INFO - kmsKeyId retrieved successfully
 2024-11-30 09:06:28,971 - logging_config - INFO - kmsKeyId retrieved successfully
 2024-11-30 09:20:50,273 - logging_config - INFO - KeyId retrieved successfully.
+2024-12-02 08:38:15,714 - logging_config - INFO - KeyId retrieved successfully.
+2024-12-02 08:40:19,267 - logging_config - INFO - Error creating the cluster: name 'kms_key_id' is not defined
+2024-12-02 08:41:12,082 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: User: arn:aws:iam::585768170668:user/projects is not authorized to perform: kms:CreateGrant on resource: arn:aws:kms:us-east-1:585768170668:key/1ebfe25e-e864-48e8-b109-ef840f58ac1a because no resource-based policy allows the kms:CreateGrant action (Service: AWSKMS; Status Code: 400; Error Code: AccessDeniedException; Request ID: 9f0311fa-afdf-4a3f-a9ce-e69f82258c4e; Proxy: null)
+2024-12-02 20:12:37,852 - logging_config - INFO - KeyId retrieved successfully.
+2024-12-02 20:12:39,883 - logging_config - INFO - Policy created successfully
+2024-12-02 20:12:41,753 - logging_config - INFO - IAM role is successfully created: arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role
+2024-12-02 20:12:42,316 - logging_config - INFO - arn:aws:iam::585768170668:policy/RedshiftKmsKeyIdPolicy successfully attached to the role
+2024-12-02 20:12:42,717 - logging_config - INFO - arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess successfully attached to the role
+2024-12-02 20:17:03,467 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: User: arn:aws:iam::585768170668:user/projects is not authorized to perform: kms:CreateGrant on resource: arn:aws:kms:us-east-1:585768170668:key/1ebfe25e-e864-48e8-b109-ef840f58ac1a because no resource-based policy allows the kms:CreateGrant action (Service: AWSKMS; Status Code: 400; Error Code: AccessDeniedException; Request ID: 23d91072-b5f3-467e-9dd8-d6e6106ad7b7; Proxy: null)
+2024-12-02 21:15:33,788 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: User: arn:aws:iam::585768170668:user/projects is not authorized to perform: kms:CreateGrant on resource: arn:aws:kms:us-east-1:585768170668:key/1ebfe25e-e864-48e8-b109-ef840f58ac1a because no resource-based policy allows the kms:CreateGrant action (Service: AWSKMS; Status Code: 400; Error Code: AccessDeniedException; Request ID: 5f45063b-67d6-4c25-a939-18a13c2c785b; Proxy: null)
+2024-12-02 21:19:03,260 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: User: arn:aws:iam::585768170668:user/projects is not authorized to perform: kms:CreateGrant on resource: arn:aws:kms:us-east-1:585768170668:key/1ebfe25e-e864-48e8-b109-ef840f58ac1a because no resource-based policy allows the kms:CreateGrant action (Service: AWSKMS; Status Code: 400; Error Code: AccessDeniedException; Request ID: 4cb6d78c-2c3c-40d4-8214-8a5a40d78156; Proxy: null)
+2024-12-02 21:28:33,905 - logging_config - INFO - KeyId retrieved successfully.
+2024-12-02 21:53:46,874 - logging_config - INFO - IAM role is successfully created: arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role
+2024-12-02 21:53:47,375 - logging_config - INFO - arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess successfully attached to the role
+2024-12-02 21:53:53,877 - logging_config - INFO - Secret retreived successfully
+2024-12-02 21:56:47,855 - logging_config - INFO - Secret retreived successfully
+2024-12-02 21:57:34,054 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:01:27,746 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:01:50,961 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:03:24,976 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:03:54,173 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:04:16,234 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:04:56,241 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:05:56,679 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:06:42,995 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:07:21,835 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:08:07,617 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:09:22,829 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:12:14,264 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:28:07,934 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:30:46,171 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:31:20,176 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:31:30,924 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:32:38,720 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:34:43,982 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:36:41,392 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:36:43,735 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: The parameter MasterUserPassword is not a valid password. Only printable ASCII characters except for '/', '@', '"', ' ', '\', ''' may be used.
+2024-12-02 22:45:20,905 - logging_config - WARNING - The secret 'redshift_secret' already exists.
+2024-12-02 22:45:22,218 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:45:26,021 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: The parameter MasterUserPassword is not a valid password. Only printable ASCII characters except for '/', '@', '"', ' ', '\', ''' may be used.
+2024-12-02 22:46:56,143 - logging_config - WARNING - The secret 'redshift_secret' already exists.
+2024-12-02 22:46:57,665 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:47:00,285 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: The parameter MasterUserPassword is not a valid password. Only printable ASCII characters except for '/', '@', '"', ' ', '\', ''' may be used.
+2024-12-02 22:52:06,118 - logging_config - WARNING - The secret 'redshift_secret' already exists.
+2024-12-02 22:52:07,505 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:52:10,709 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: The parameter MasterUserPassword is not a valid password. Only printable ASCII characters except for '/', '@', '"', ' ', '\', ''' may be used.
+2024-12-02 22:57:18,274 - logging_config - INFO - Secret retreived successfully
+2024-12-02 22:57:21,966 - logging_config - INFO - Error creating the cluster: An error occurred (ClusterParameterGroupNotFound) when calling the CreateCluster operation: ClusterParameterGroup not found: retail-parameter-group
+2024-12-02 23:02:08,178 - logging_config - INFO - Secret retreived successfully
+2024-12-02 23:02:11,959 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: The list of Amazon Resource Names (ARNs) for customer roles should contain the ARN of the default IAM role when a default is specified.
+2024-12-02 23:04:41,927 - logging_config - INFO - Secret retreived successfully
+2024-12-02 23:04:50,654 - logging_config - INFO - Redshift cluster created successfully
