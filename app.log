@@ -80,3 +80,11 @@
 2024-12-02 23:02:11,959 - logging_config - INFO - Error creating the cluster: An error occurred (InvalidParameterValue) when calling the CreateCluster operation: The list of Amazon Resource Names (ARNs) for customer roles should contain the ARN of the default IAM role when a default is specified.
 2024-12-02 23:04:41,927 - logging_config - INFO - Secret retreived successfully
 2024-12-02 23:04:50,654 - logging_config - INFO - Redshift cluster created successfully
+2024-12-03 13:03:34,724 - logging_config - INFO - Secret retreived successfully
+2024-12-03 13:03:43,750 - logging_config - INFO - Redshift cluster created successfully
+2024-12-03 18:22:39,864 - logging_config - INFO - An unexpected error occurred: 'Cluster'
+2024-12-03 18:25:12,338 - logging_config - INFO - An unexpected error occurred: list indices must be integers or slices, not str
+2024-12-03 18:26:19,358 - logging_config - INFO - An unexpected error occurred: list indices must be integers or slices, not str
+2024-12-03 18:27:04,855 - logging_config - INFO - An unexpected error occurred: name 'security_group_id' is not defined
+2024-12-03 18:41:52,508 - logging_config - INFO - An unexpected error occurred: An error occurred (InvalidGroupId.Malformed) when calling the AuthorizeSecurityGroupIngress operation: The security-group ID 'retail-cluster' is malformed
+2024-12-03 18:42:53,411 - logging_config - INFO - Successfully added inbound rule for IP 172.25.216.5/32 to security group sg-03b4db065615f216b.
