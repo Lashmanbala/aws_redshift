@@ -3,10 +3,8 @@ import json
 from logging_config import logger
 import time
 
-def create_redshift_secret(secret_dict):
+def create_redshift_secret(secret_name, secret_dict):
     client = boto3.client('secretsmanager')
-
-    secret_name = 'redshift_secret'
     
     try:
         response = client.create_secret(
@@ -26,7 +24,7 @@ def create_redshift_secret(secret_dict):
         logger.error(f"Error creating the secret: {e}")
 
 
-def get_secret(secret_name='redshift_secret'):
+def get_secret(secret_name):
     client = boto3.client('secretsmanager')
     
     try:
