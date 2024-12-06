@@ -2,13 +2,14 @@ import boto3
 import time
 from logging_config import logger
 
-def _create_cluster(cluster_identifier,elasticIP, iam_role_arn, username, password ):
+def _create_cluster(cluster_identifier, parameter_group, elasticIP, iam_role_arn, username, password ):
 
     redshift_client = boto3.client('redshift')
 
     try:
         response = redshift_client.create_cluster(
                 ClusterIdentifier=cluster_identifier,
+                ClusterParameterGroupName=parameter_group,
                 ClusterType='single-node',
                 NodeType='dc2.large',
                 MasterUsername=username,
