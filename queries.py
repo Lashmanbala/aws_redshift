@@ -62,3 +62,21 @@ admin_retail_db_queries = [f"CREATE SCHEMA {schema_name} AUTHORIZATION {db_user_
 # creating retail_schema by admin connecting with retail_db
 run_queries(endpoint, db_name, db_user_name, db_password, admin_retail_db_queries)
 
+create_table_queries = [ '''CREATE TABLE departments (
+                        department_id INT NOT NULL,
+                        department_name VARCHAR(45) NOT NULL,
+                        PRIMARY KEY (department_id)
+                        );'''
+                        ,
+                        '''CREATE TABLE categories (
+                        category_id INT NOT NULL,
+                        category_department_id INT NOT NULL,
+                        category_name VARCHAR(45) NOT NULL,
+                        PRIMARY KEY (category_id)
+                        ); ''' ]
+
+db_name = 'retail_db'
+schema_name = 'retail_schema'
+db_user_name = db_secret['username']
+db_password = db_secret['password']
+run_queries(endpoint, db_name, db_user_name, db_password, create_table_queries)
