@@ -88,3 +88,76 @@
 2024-12-03 18:27:04,855 - logging_config - INFO - An unexpected error occurred: name 'security_group_id' is not defined
 2024-12-03 18:41:52,508 - logging_config - INFO - An unexpected error occurred: An error occurred (InvalidGroupId.Malformed) when calling the AuthorizeSecurityGroupIngress operation: The security-group ID 'retail-cluster' is malformed
 2024-12-03 18:42:53,411 - logging_config - INFO - Successfully added inbound rule for IP 172.25.216.5/32 to security group sg-03b4db065615f216b.
+2024-12-04 11:56:28,769 - logging_config - INFO - Secret retreived successfully
+2024-12-04 12:07:15,161 - logging_config - INFO - Secret retreived successfully
+2024-12-04 12:23:11,632 - logging_config - INFO - Secret retreived successfully
+2024-12-04 12:25:50,617 - logging_config - INFO - Secret retreived successfully
+2024-12-04 12:44:25,476 - logging_config - INFO - Secret retreived successfully
+2024-12-04 12:47:07,383 - logging_config - INFO - Secret retreived successfully
+2024-12-04 13:26:59,311 - logging_config - INFO - Secret retreived successfully
+2024-12-04 14:36:20,851 - logging_config - INFO - Secret retreived successfully
+2024-12-04 17:03:45,509 - logging_config - INFO - Secret rds_secret created successfully.
+2024-12-04 17:03:52,257 - logging_config - INFO - Secret retreived successfully
+2024-12-04 17:32:39,042 - logging_config - INFO - Secret retreived successfully
+2024-12-04 18:24:12,921 - logging_config - INFO - Parameter group 'custom-pg' created successfully.
+2024-12-04 18:24:14,871 - logging_config - INFO - Error modifying parameter group: An error occurred (InvalidParameterValue) when calling the ModifyClusterParameterGroup operation: 'dynamic' is not a valid apply type for parameter search_path.
+2024-12-04 18:24:16,628 - logging_config - INFO - Error applying parameter group to cluster: An error occurred (ClusterNotFound) when calling the ModifyCluster operation: Cluster not found: your-cluster-identifier
+2024-12-04 18:24:18,154 - logging_config - INFO - Parameter group 'retail-pg' created successfully.
+2024-12-04 18:31:41,501 - logging_config - INFO - Error modifying parameter group: An error occurred (InvalidParameterValue) when calling the ModifyClusterParameterGroup operation: 'dynamic' is not a valid apply type for parameter search_path.
+2024-12-04 18:34:56,871 - logging_config - INFO - Parameter group 'retail-pg' modified successfully.
+2024-12-04 19:43:00,620 - logging_config - INFO - Parameter group 'retail-pg' applied to cluster 'retail-cluster' successfully.
+2024-12-08 07:05:16,543 - logging_config - INFO - Secret retreived successfully
+2024-12-08 07:05:18,245 - logging_config - INFO - Secret retreived successfully
+2024-12-08 07:05:22,400 - logging_config - INFO - Successfully executed query: CREATE TABLE departments (
+                        department_id INT NOT NULL,
+                        department_name VARCHAR(45) NOT NULL,
+                        PRIMARY KEY (department_id)
+                        );
+2024-12-08 07:05:22,712 - logging_config - INFO - Successfully executed query: CREATE TABLE categories (
+                        category_id INT NOT NULL,
+                        category_department_id INT NOT NULL,
+                        category_name VARCHAR(45) NOT NULL,
+                        PRIMARY KEY (category_id)
+                        ); 
+2024-12-08 07:27:16,096 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-08 07:27:17,414 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-08 07:27:20,500 - logging_config - INFO - Error with exception: syntax error at or near "{" in context "SET search_path = {", at line 1
+LINE 1: SET search_path = {schema_name};
+                          ^
+
+2024-12-08 07:27:55,925 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-08 07:27:57,347 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-08 07:28:00,491 - logging_config - INFO - Successfully executed query: SET search_path = retail_schema;
+2024-12-08 07:28:00,810 - logging_config - INFO - Successfully executed query: CREATE TABLE departments (
+                        department_id INT NOT NULL,
+                        department_name VARCHAR(45) NOT NULL,
+                        PRIMARY KEY (department_id)
+                        );
+2024-12-08 07:28:01,120 - logging_config - INFO - Successfully executed query: CREATE TABLE categories (
+                        category_id INT NOT NULL,
+                        category_department_id INT NOT NULL,
+                        category_name VARCHAR(45) NOT NULL,
+                        PRIMARY KEY (category_id)
+                        ); 
+2024-12-08 08:09:24,081 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-08 08:09:25,251 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-08 08:09:28,414 - logging_config - INFO - Error with exception: syntax error at or near "arn" in context "departments
+            FROM 's3://redshift-bucket-123/departments/part-00000'
+            IAM_ROLE arn", at line 4, column 22
+LINE 4:             IAM_ROLE arn:aws:iam::585768170668:role/Redshift...
+                             ^
+
+2024-12-08 08:10:15,634 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-08 08:10:16,806 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-08 08:10:30,208 - logging_config - INFO - Successfully executed query: 
+            COPY retail_db.retail_schema.departments
+            FROM 's3://redshift-bucket-123/departments/part-00000'
+            IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+            FORMAT CSV
+            
+2024-12-08 08:10:41,230 - logging_config - INFO - Successfully executed query: 
+            COPY retail_db.retail_schema.categories
+            FROM 's3://redshift-bucket-123/categories/part-00000'
+            IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+            FORMAT CSV
+            

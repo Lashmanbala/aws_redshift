@@ -45,38 +45,53 @@ db_password = db_secret['password']
 db_name = 'retail_db'
 default_database = 'dev'
 
-admin_dev_query_list = [f"CREATE DATABASE {db_name};",
-                    f"CREATE USER {db_user_name} WITH PASSWORD '{db_password}';",
-                    f"GRANT ALL ON DATABASE {db_name} TO {db_user_name};"]
+# admin_dev_query_list = [f"CREATE DATABASE {db_name};",
+#                     f"CREATE USER {db_user_name} WITH PASSWORD '{db_password}';",
+#                     f"GRANT ALL ON DATABASE {db_name} TO {db_user_name};"]
 
-# creating retail_db and retail_user by admin connecting with default db
-run_queries(endpoint, default_database, admin_user_name, admin_password, admin_dev_query_list)
+# # creating retail_db and retail_user by admin connecting with default db
+# run_queries(endpoint, default_database, admin_user_name, admin_password, admin_dev_query_list)    # connecting to default db with admin user
 
-db_name = 'retail_db'
+# db_name = 'retail_db'
 schema_name = 'retail_schema'
 
-admin_retail_db_queries = [f"CREATE SCHEMA {schema_name} AUTHORIZATION {db_user_name};",
-                            f"GRANT SELECT ON ALL TABLES IN SCHEMA pg_catalog TO {db_user_name};",
-                            f"SET search_path = '$user', public, {schema_name};"]
+# admin_retail_db_queries = [f"CREATE SCHEMA {schema_name} AUTHORIZATION {db_user_name};",
+#                             f"GRANT SELECT ON ALL TABLES IN SCHEMA pg_catalog TO {db_user_name};",
+#                             f"SET search_path = '$user', public, {schema_name};"]
 
-# creating retail_schema by admin connecting with retail_db
-run_queries(endpoint, db_name, db_user_name, db_password, admin_retail_db_queries)
+# # creating retail_schema by admin connecting with retail_db
+# run_queries(endpoint, db_name, admin_user_name, db_password, admin_retail_db_queries)  # connecting to retail_db with admin user
 
-create_table_queries = [ '''CREATE TABLE departments (
-                        department_id INT NOT NULL,
-                        department_name VARCHAR(45) NOT NULL,
-                        PRIMARY KEY (department_id)
-                        );'''
-                        ,
-                        '''CREATE TABLE categories (
-                        category_id INT NOT NULL,
-                        category_department_id INT NOT NULL,
-                        category_name VARCHAR(45) NOT NULL,
-                        PRIMARY KEY (category_id)
-                        ); ''' ]
+# create_table_queries = [ '''CREATE TABLE retail_db.retail_schema.departments (
+            #                         department_id INT NOT NULL,
+            #                         department_name VARCHAR(45) NOT NULL,
+            #                         PRIMARY KEY (department_id)
+            #                         );'''
+#                         ,
+#                         '''CREATE TABLE retail_db.retail_schema.categories (
+            #                         category_id INT NOT NULL,
+            #                         category_department_id INT NOT NULL,
+            #                         category_name VARCHAR(45) NOT NULL,
+            #                         PRIMARY KEY (category_id)
+            #                         ); ''' ]
 
-db_name = 'retail_db'
-schema_name = 'retail_schema'
-db_user_name = db_secret['username']
-db_password = db_secret['password']
-run_queries(endpoint, db_name, db_user_name, db_password, create_table_queries)
+# db_name = 'retail_db'
+# schema_name = 'retail_schema'
+# run_queries(endpoint, db_name, db_user_name, db_password, create_table_queries)  # connecting to retail_db with retail_user 
+
+
+iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+
+copy_cmds = [f'''
+            COPY retail_db.retail_schema.departments
+            FROM 's3://redshift-bucket-123/departments/part-00000'
+            IAM_ROLE '{iam_role_arn}'
+            FORMAT CSV
+            ''',
+            f'''
+            COPY retail_db.retail_schema.categories
+            FROM 's3://redshift-bucket-123/categories/part-00000'
+            IAM_ROLE '{iam_role_arn}'
+            FORMAT CSV
+            ''']
+run_queries(endpoint, db_name, db_user_name, db_password, copy_cmds)
