@@ -32,7 +32,7 @@ def get_secret(secret_name):
         raw_secret_string = response['SecretString']
         corrected_secret_string = raw_secret_string.strip('"').replace("'", '"')
         secret = json.loads(corrected_secret_string)
-        logger.info('Secret retreived successfully')
+        logger.info(f'Secret {secret_name} retreived successfully')
         return secret
     except Exception as e:
         logger.exception("Failed to retrieve secret")
