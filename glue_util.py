@@ -2,52 +2,77 @@ import boto3
 import time
 from logging_config import logger
 
-def create_glue_crawler(crawler_name, role, database_name, s3_target_path, table_prefix):
+def create_glue_db(database_name, database_description):
     glue_client = boto3.client('glue')
     try:
-        res = glue_client.create_crawler(
-            Name=crawler_name,
-            Role=role,
-            DatabaseName=database_name,
-            Targets={
-                'S3Targets': [
-                    {
-                        'Path': s3_target_path
-                    }
-                ]
-            },
-            TablePrefix=table_prefix,
-            Description='Crawler to crawl data in S3 and populate Glue Data Catalog',
-            RecrawlPolicy={
-                'RecrawlBehavior': 'CRAWL_EVERYTHING'
-                }
-            # , Schedule='cron(0 12 * * ? *)',  # Optional schedule for periodic runs
-
-            )
-        time.sleep(5) # wait untill crawler created
-        logger.info(f'Glue crawler created successfully {crawler_name}')
-        return res
+        response = glue_client.create_database(
+                                                DatabaseInput={
+                                                    "Name": database_name,
+                                                    "Description": database_description
+                                                }
+                                            )
+        logger.info(f"Database {database_name} created successfully.")
+        return response
     except Exception as e:
-        logger.error(f'Error occured while creating crawler: {e}')
+        logger.info(f'Error while creating db: {e}')
 
-
-
-def start_glue_crawler(crawler_name):
+def create_glue_table(database_name, table_name, columns_list, s3_path):
     glue_client = boto3.client('glue')
+    try:
+        response = glue_client.create_table(
+                                DatabaseName=database_name,
+                                TableInput={
+                                    "Name": table_name,
+                                    "StorageDescriptor": {
+                                                        "Columns": columns_list,
+                                                        "Location": s3_path,
+                                                        "InputFormat": "org.apache.hadoop.mapred.TextInputFormat",
+                                                        "OutputFormat": "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat",
+                                                        "SerdeInfo": {
+                                                            "SerializationLibrary": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+                                                            "Parameters": {
+                                                                "field.delim": ","  # delimiter used in your data
+                                                            }
+                                                        }
+                                                    },
+                                    "TableType": "EXTERNAL_TABLE",  # Indicates the table references data in S3
+                                    "Parameters": {
+                                        "classification": "csv"  # data format
+                                    }
+                                }
+                            )
+        logger.info(f'{table_name} table created successfully')
+        return response
+    except Exception as e:
+        logger.error(f'Error while creating table: {e}')
 
-    res = glue_client.start_crawler(Name=crawler_name)
-    logger.info(f'{crawler_name} started successfully')
 
-    return res
+database_name = 'retail_db_redshift1'     # as per the default redshift role ploicy resource arn by aws the glue database name should contain the string redshift in it
+database_description = "Database for redshift spectrum"
 
-crawler_name = 'retail_crawler1'
-role = 'arn:aws:iam::585768170668:role/service-role/AWSGlueServiceRole-retail1'
-database_name = 'retail_db_glue'
-s3_target_path = 's3://redshift-bucket-123/landing/'
-table_prefix = 'glue_'
+res = create_glue_db(database_name, database_description)
+print(res)
 
-response = create_glue_crawler(crawler_name, role, database_name, s3_target_path, table_prefix)
-print(response)
+clm_list = [{'Name': 'order_id','Type': 'INT'},
+            {'Name': 'order_date','Type': 'TIMESTAMP'},
+            {'Name': 'order_customer_id','Type': 'INT'},
+            {'Name': 'order_status','Type': 'STRING'}]
 
-res = start_glue_crawler(crawler_name)
+table_name = 'redshift_orders'
+s3_path = 's3://redshift-bucket-123/landing/orders/'
+
+res = create_glue_table(database_name, table_name, clm_list, s3_path)
+print(res)
+
+clm_list = [{'Name': 'order_item_id','Type': 'INT'},
+            {'Name': 'order_item_order_id','Type': 'INT'},
+            {'Name': 'order_item_product_id','Type': 'INT'},
+            {'Name': 'order_item_quantity','Type': 'INT'},
+            {'Name': 'order_item_subtotal','Type': 'FLOAT'},
+            {'Name': 'order_item_product_price','Type': 'FLOAT'}]
+
+table_name = 'redshift_order_items' # as per the default redshift role ploicy resource arn by aws the glue table name should contain the string redshift in it
+s3_path = 's3://redshift-bucket-123/landing/order_items/'
+
+res = create_glue_table(database_name, table_name, clm_list, s3_path)
 print(res)
