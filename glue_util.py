@@ -2,7 +2,7 @@ import boto3
 import time
 from logging_config import logger
 
-def create_glue_crawler(crawler_name, role, database_name, s3_target_path):
+def create_glue_crawler(crawler_name, role, database_name, s3_target_path, table_prefix):
     glue_client = boto3.client('glue')
     try:
         res = glue_client.create_crawler(
@@ -16,6 +16,7 @@ def create_glue_crawler(crawler_name, role, database_name, s3_target_path):
                     }
                 ]
             },
+            TablePrefix=table_prefix,
             Description='Crawler to crawl data in S3 and populate Glue Data Catalog',
             RecrawlPolicy={
                 'RecrawlBehavior': 'CRAWL_EVERYTHING'
@@ -39,13 +40,14 @@ def start_glue_crawler(crawler_name):
 
     return res
 
-crawler_name = 'retail_crawler'
-role = 'arn:aws:iam::585768170668:role/s3AccessForGlue'
+crawler_name = 'retail_crawler1'
+role = 'arn:aws:iam::585768170668:role/service-role/AWSGlueServiceRole-retail1'
 database_name = 'retail_db_glue'
-s3_target_path = 's3://redshift-bucket-123/'
+s3_target_path = 's3://redshift-bucket-123/landing/'
+table_prefix = 'glue_'
 
-# response = create_glue_crawler(crawler_name, role, database_name, s3_target_path)
-# print(response)
+response = create_glue_crawler(crawler_name, role, database_name, s3_target_path, table_prefix)
+print(response)
 
 res = start_glue_crawler(crawler_name)
 print(res)
