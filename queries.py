@@ -66,14 +66,15 @@ schema_name = 'retail_schema'
             #                         department_id INT NOT NULL,
             #                         department_name VARCHAR(45) NOT NULL,
             #                         PRIMARY KEY (department_id)
-            #                         );'''
+            #                         )DISTSTYLE ALL;'''
 #                         ,
 #                         '''CREATE TABLE retail_db.retail_schema.categories (
             #                         category_id INT NOT NULL,
             #                         category_department_id INT NOT NULL,
             #                         category_name VARCHAR(45) NOT NULL,
             #                         PRIMARY KEY (category_id)
-            #                         ); ''' ]
+            #                         )DISTSTYLE ALL
+            #; ''' ]
 
 # db_name = 'retail_db'
 # schema_name = 'retail_schema'
@@ -82,16 +83,41 @@ schema_name = 'retail_schema'
 
 iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
 
-copy_cmds = [f'''
-            COPY retail_db.retail_schema.departments
-            FROM 's3://redshift-bucket-123/departments/part-00000'
-            IAM_ROLE '{iam_role_arn}'
-            FORMAT CSV
-            ''',
-            f'''
-            COPY retail_db.retail_schema.categories
-            FROM 's3://redshift-bucket-123/categories/part-00000'
-            IAM_ROLE '{iam_role_arn}'
-            FORMAT CSV
-            ''']
-run_queries(endpoint, db_name, db_user_name, db_password, copy_cmds)
+# copy_cmds = [f'''
+#             COPY retail_db.retail_schema.departments
+#             FROM 's3://redshift-bucket-123/departments/part-00000'
+#             IAM_ROLE '{iam_role_arn}'
+#             FORMAT CSV
+#             ''',
+#             f'''
+#             COPY retail_db.retail_schema.categories
+#             FROM 's3://redshift-bucket-123/categories/part-00000'
+#             IAM_ROLE '{iam_role_arn}'
+#             FORMAT CSV
+#             ''']
+# run_queries(endpoint, db_name, db_user_name, db_password, copy_cmds)
+
+# spectrum_queries = [f'''
+#                     CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum2
+#                     FROM  DATA CATALOG
+#                     DATABASE 'retail_db_redshift1'
+#                     IAM_ROLE '{iam_role_arn}'
+#                     CREATE EXTERNAL DATABASE IF NOT EXISTS;
+#                     '''
+                    ]
+
+# res = run_queries(endpoint, db_name, db_user_name, db_password, spectrum_queries)
+
+rds_endpoint = "retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com"
+rds_secret_arn = 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_redshift_secret-dvud2L'
+
+federated_queries = [f'''
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries2
+                    FROM MYSQL
+                    DATABASE 'retail_db_redshift'
+                    IAM_ROLE '{iam_role_arn}'
+                    URI '{rds_endpoint}'
+                    SECRET_ARN '{rds_secret_arn}';
+                    ''']
+
+res = run_queries(endpoint, db_name, db_user_name, db_password, federated_queries)
