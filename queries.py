@@ -217,3 +217,28 @@ if __name__ == "__main__":
                                             ''']
 
     res = run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, external_schema_for_federated_queries)
+
+    '''
+    Validating Spectrum and federated:
+        Get order count per customer for the month of 2014 jan.
+        Orders table from glue db (Spectrum layer)
+        Customer table from Mysql (Federated query)
+    '''
+    join_query = [
+                    '''
+                    SELECT  c.customer_id,
+                        c.customer_fname,
+                        c.customer_lname,
+                        o.order_date,
+                        COUNT(o.order_id) AS customer_order_count
+                    FROM retail_spectrum2.redshift_orders o 
+                         JOIN retail_federated_queries2.customers c
+                            ON o.order_customer_id = c.customer_id
+                            AND TO_CHAR(o.order_date, 'YYYYMM') = '201401'
+                    GROUP BY 1,2,3,4
+                    ORDER BY 5 DESC, 1 ASC
+                    LIMIT 10
+                    '''
+                  ]
+
+    run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, join_query)

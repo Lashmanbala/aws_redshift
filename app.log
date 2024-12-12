@@ -374,3 +374,24 @@ LINE 4:             IAM_ROLE arn:aws:iam::585768170668:role/Redshift...
                     URI 'retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com'
                     SECRET_ARN 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_redshift_secret-dvud2L';
                     
+2024-12-12 11:37:40,577 - logging_config - INFO - Error with exception: could not translate host name "retail-cluster.czbbpdfkkega.us-east-1.redshift.amazonaws.com:5439/dev" to address: Name or service not known
+
+2024-12-12 11:39:44,810 - logging_config - INFO - Error with exception: could not translate host name "retail-cluster.czbbpdfkkega.us-east-1.redshift.amazonaws.com:5439/dev" to address: Name or service not known
+
+2024-12-12 11:40:44,485 - logging_config - INFO - Error with exception: connection to server at "retail-cluster.czbbpdfkkega.us-east-1.redshift.amazonaws.com" (54.174.124.10), port 5439 failed: FATAL:  password authentication failed for user "retail_user"
+connection to server at "retail-cluster.czbbpdfkkega.us-east-1.redshift.amazonaws.com" (54.174.124.10), port 5439 failed: FATAL:  password authentication failed for user "retail_user"
+
+2024-12-12 11:43:53,269 - logging_config - INFO - Successfully executed query: 
+                    SELECT  c.customer_id,
+                        c.customer_fname,
+                        c.customer_lname,
+                        o.order_date,
+                        COUNT(o.order_id) AS customer_order_count
+                    FROM retail_spectrum2.redshift_orders o 
+                         JOIN retail_federated_queries2.customers c
+                            ON o.order_customer_id = c.customer_id
+                            AND TO_CHAR(o.order_date, 'YYYYMM') = '201401'
+                    GROUP BY 1,2,3,4
+                    ORDER BY 5 DESC, 1 ASC
+                    LIMIT 10
+                    
