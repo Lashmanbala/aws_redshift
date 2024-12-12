@@ -161,3 +161,216 @@ LINE 4:             IAM_ROLE arn:aws:iam::585768170668:role/Redshift...
             IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
             FORMAT CSV
             
+2024-12-09 21:00:38,991 - logging_config - INFO - Glue crawler created successfully retail_crawler
+2024-12-09 21:04:17,587 - logging_config - INFO - retail_crawler started successfully
+2024-12-10 05:59:18,152 - logging_config - INFO - Glue crawler created successfully retail_crawler
+2024-12-10 06:28:30,573 - logging_config - INFO - Glue crawler created successfully retail_crawler1
+2024-12-10 08:27:36,706 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-10 08:27:38,422 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-10 08:27:43,468 - logging_config - INFO - Error with exception: User: arn:aws:sts::585768170668:assumed-role/Redshift_All_Commands_Access_Role/RedshiftIamRoleSession is not authorized to perform: glue:CreateDatabase on resource: arn:aws:glue:us-east-1:585768170668:database/retail_db_glue because no identity-based policy allows the glue:CreateDatabase action
+
+2024-12-10 08:28:28,663 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-10 08:28:29,944 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-10 08:28:33,067 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum
+                    FROM  DATA CATALOG
+                    DATABASE 'retail_db_glue'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role';
+                    
+2024-12-10 09:17:09,718 - logging_config - INFO - Glue crawler created successfully retail_crawler3
+2024-12-10 09:17:22,616 - logging_config - INFO - retail_crawler3 started successfully
+2024-12-10 09:19:33,958 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-10 09:19:35,121 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-10 09:19:38,569 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum
+                    FROM  DATA CATALOG
+                    DATABASE 'retail_db_glue'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    CREATE EXTERNAL DATABASE IF NOT EXISTS;
+                    
+2024-12-10 09:21:41,882 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-10 09:21:43,302 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-10 09:21:46,728 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum1
+                    FROM  DATA CATALOG
+                    DATABASE 'retail_db_redshift'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    CREATE EXTERNAL DATABASE IF NOT EXISTS;
+                    
+2024-12-10 13:13:56,618 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-10 13:13:58,347 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-10 13:14:03,580 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum1
+                    FROM  DATA CATALOG
+                    DATABASE 'retail_db_redshift'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    CREATE EXTERNAL DATABASE IF NOT EXISTS;
+                    
+2024-12-10 13:15:00,850 - logging_config - ERROR - Error occured while updating clm names: An error occurred (EntityNotFoundException) when calling the UpdateTable operation: Table orders not found.
+2024-12-10 13:15:45,070 - logging_config - INFO - redshift_orders got updated with clm names successfully
+2024-12-10 14:54:31,574 - logging_config - INFO - Error while creating db: An error occurred (AlreadyExistsException) when calling the CreateDatabase operation: Database already exists.
+2024-12-10 14:54:54,952 - logging_config - INFO - Database retail_db_redshift1 created successfully.
+2024-12-10 15:15:58,145 - logging_config - INFO - redshift_orders created successfully
+2024-12-10 15:28:24,197 - logging_config - ERROR - Error while creating table: An error occurred (AlreadyExistsException) when calling the CreateTable operation: Table already exists.
+2024-12-10 15:28:53,290 - logging_config - ERROR - Error while creating table: An error occurred (AlreadyExistsException) when calling the CreateTable operation: Table already exists.
+2024-12-10 15:29:49,513 - logging_config - INFO - redshift_order_items table created successfully
+2024-12-10 15:43:21,381 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-10 15:43:22,787 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-10 15:43:26,946 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum2
+                    FROM  DATA CATALOG
+                    DATABASE 'retail_db_redshift1'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    CREATE EXTERNAL DATABASE IF NOT EXISTS;
+                    
+2024-12-11 07:32:43,597 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 07:32:55,516 - logging_config - INFO - Creating RDS MySQL instance retail-mysql-db...
+2024-12-11 07:52:21,487 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 07:52:34,900 - logging_config - INFO - Creating RDS MySQL instance retail-mysql-db...
+2024-12-11 08:03:00,787 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 08:26:52,936 - logging_config - INFO - Successfully added inbound rule for IP 172.25.216.5/32 to security group sg-03b4db065615f216b.
+2024-12-11 10:07:56,024 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:08:22,586 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:10:40,776 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:25:37,655 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:27:18,860 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:28:20,805 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:29:16,397 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:30:04,716 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:31:26,635 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:32:47,451 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:32:49,417 - logging_config - INFO - Successfully executed query: SHOW DATABASES;
+2024-12-11 10:33:19,575 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:33:21,695 - logging_config - INFO - Successfully executed query: SHOW DATABASES;
+2024-12-11 10:39:31,723 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 10:39:34,251 - logging_config - INFO - Successfully executed query: SHOW DATABASES;
+2024-12-11 11:27:54,461 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 11:27:56,619 - logging_config - INFO - Successfully executed query: 
+                CREATE TABLE retail_db_redshift.products (
+                product_id INT NOT NULL,
+                product_category_id INT NOT NULL,
+                product_name VARCHAR(45) NOT NULL,
+                product_description VARCHAR(255) NOT NULL,
+                product_price FLOAT NOT NULL,
+                product_image VARCHAR(255) NOT NULL,
+                PRIMARY KEY (product_id)
+                );
+                
+2024-12-11 11:27:56,966 - logging_config - INFO - Successfully executed query: 
+                CREATE TABLE retail_db_redshift.customers (
+                customer_id INT NOT NULL,
+                customer_fname VARCHAR(45) NOT NULL,
+                customer_lname VARCHAR(45) NOT NULL,
+                customer_email VARCHAR(45) NOT NULL,
+                customer_password VARCHAR(45) NOT NULL,
+                customer_street VARCHAR(255) NOT NULL,
+                customer_city VARCHAR(45) NOT NULL,
+                customer_state VARCHAR(45) NOT NULL,
+                customer_zipcode VARCHAR(45) NOT NULL,
+                PRIMARY KEY (customer_id)
+                ); 
+2024-12-11 11:27:57,288 - logging_config - INFO - Successfully executed query: SHOW TABLES;
+2024-12-11 11:34:53,692 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 11:34:56,064 - logging_config - INFO - Error with exception: (1045, "Access denied for user 'retail_user'@'%' (using password: YES)")
+2024-12-11 11:47:08,508 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 11:47:10,848 - logging_config - INFO - Successfully executed query: GRANT ALL PRIVILEGES ON retail_db_redshift.* TO retail_user;
+2024-12-11 11:47:11,162 - logging_config - INFO - Error with exception: (1045, "Access denied for user 'retail_user'@'%' (using password: YES)")
+2024-12-11 12:20:36,915 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:20:36,989 - logging_config - INFO - Connected to MySQL RDS.
+2024-12-11 12:20:37,135 - logging_config - INFO - CSV file loaded into a DataFrame successfully.
+2024-12-11 12:20:54,797 - logging_config - ERROR - Error occured: (pymysql.err.OperationalError) (1054, "Unknown column '1' in 'field list'")
+[SQL: INSERT INTO customers (`1`, `Richard`, `Hernandez`, `XXXXXXXXX`, `XXXXXXXXX.1`, `6303 Heather Plaza`, `Brownsville`, `TX`, `78521`) VALUES (%(1)s, %(Richard)s, %(Hernandez)s, %(XXXXXXXXX)s, %(XXXXXXXXX_1)s, %(6303_Heather_Plaza)s, %(Brownsville)s, %(TX)s, %(78521)s)]
+[parameters: [{'1': 2, 'Richard': 'Mary', 'Hernandez': 'Barrett', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '9526 Noble Embers Ridge', 'Brownsville': 'Littleton', 'TX': 'CO', '78521': 80126}, {'1': 3, 'Richard': 'Ann', 'Hernandez': 'Smith', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '3422 Blue Pioneer Bend', 'Brownsville': 'Caguas', 'TX': 'PR', '78521': 725}, {'1': 4, 'Richard': 'Mary', 'Hernandez': 'Jones', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '8324 Little Common', 'Brownsville': 'San Marcos', 'TX': 'CA', '78521': 92069}, {'1': 5, 'Richard': 'Robert', 'Hernandez': 'Hudson', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '10 Crystal River Mall ', 'Brownsville': 'Caguas', 'TX': 'PR', '78521': 725}, {'1': 6, 'Richard': 'Mary', 'Hernandez': 'Smith', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '3151 Sleepy Quail Promenade', 'Brownsville': 'Passaic', 'TX': 'NJ', '78521': 7055}, {'1': 7, 'Richard': 'Melissa', 'Hernandez': 'Wilcox', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '9453 High Concession', 'Brownsville': 'Caguas', 'TX': 'PR', '78521': 725}, {'1': 8, 'Richard': 'Megan', 'Hernandez': 'Smith', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '3047 Foggy Forest Plaza', 'Brownsville': 'Lawrence', 'TX': 'MA', '78521': 1841}, {'1': 9, 'Richard': 'Mary', 'Hernandez': 'Perez', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '3616 Quaking Street', 'Brownsville': 'Caguas', 'TX': 'PR', '78521': 725}  ... displaying 10 of 12434 total bound parameter sets ...  {'1': 12434, 'Richard': 'Mary', 'Hernandez': 'Mills', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '9720 Colonial Parade', 'Brownsville': 'Caguas', 'TX': 'PR', '78521': 725}, {'1': 12435, 'Richard': 'Laura', 'Hernandez': 'Horton', 'XXXXXXXXX': 'XXXXXXXXX', 'XXXXXXXXX_1': 'XXXXXXXXX', '6303_Heather_Plaza': '5736 Honey Downs', 'Brownsville': 'Summerville', 'TX': 'SC', '78521': 29483}]]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2024-12-11 12:20:54,801 - logging_config - INFO - MySQL connection closed.
+2024-12-11 12:28:12,827 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:28:12,886 - logging_config - INFO - Connected to MySQL RDS.
+2024-12-11 12:28:12,955 - logging_config - INFO - CSV file loaded into a DataFrame successfully.
+2024-12-11 12:28:34,945 - logging_config - ERROR - Error occured: (pymysql.err.OperationalError) (1054, "Unknown column '0' in 'field list'")
+[SQL: INSERT INTO customers (`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`) VALUES (%(0)s, %(1)s, %(2)s, %(3)s, %(4)s, %(5)s, %(6)s, %(7)s, %(8)s)]
+[parameters: [{'0': 1, '1': 'Richard', '2': 'Hernandez', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '6303 Heather Plaza', '6': 'Brownsville', '7': 'TX', '8': 78521}, {'0': 2, '1': 'Mary', '2': 'Barrett', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '9526 Noble Embers Ridge', '6': 'Littleton', '7': 'CO', '8': 80126}, {'0': 3, '1': 'Ann', '2': 'Smith', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '3422 Blue Pioneer Bend', '6': 'Caguas', '7': 'PR', '8': 725}, {'0': 4, '1': 'Mary', '2': 'Jones', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '8324 Little Common', '6': 'San Marcos', '7': 'CA', '8': 92069}, {'0': 5, '1': 'Robert', '2': 'Hudson', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '10 Crystal River Mall ', '6': 'Caguas', '7': 'PR', '8': 725}, {'0': 6, '1': 'Mary', '2': 'Smith', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '3151 Sleepy Quail Promenade', '6': 'Passaic', '7': 'NJ', '8': 7055}, {'0': 7, '1': 'Melissa', '2': 'Wilcox', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '9453 High Concession', '6': 'Caguas', '7': 'PR', '8': 725}, {'0': 8, '1': 'Megan', '2': 'Smith', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '3047 Foggy Forest Plaza', '6': 'Lawrence', '7': 'MA', '8': 1841}  ... displaying 10 of 10000 total bound parameter sets ...  {'0': 9999, '1': 'Susan', '2': 'Smith', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '5238 Sunny Walk', '6': 'Albuquerque', '7': 'NM', '8': 87112}, {'0': 10000, '1': 'Mary', '2': 'Mcfarland', '3': 'XXXXXXXXX', '4': 'XXXXXXXXX', '5': '9938 Sunny Loop', '6': 'Caguas', '7': 'PR', '8': 725}]]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2024-12-11 12:28:34,946 - logging_config - INFO - MySQL connection closed.
+2024-12-11 12:37:48,539 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:39:00,139 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:39:00,199 - logging_config - INFO - Connected to MySQL RDS.
+2024-12-11 12:39:00,273 - logging_config - INFO - CSV file loaded into a DataFrame successfully.
+2024-12-11 12:39:13,468 - logging_config - INFO - Data loaded successfully into the table 'customers'.
+2024-12-11 12:39:13,471 - logging_config - INFO - MySQL connection closed.
+2024-12-11 12:40:54,727 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:40:56,891 - logging_config - INFO - Successfully executed query: SELECT COUNT(*) FROM customers
+2024-12-11 12:43:59,859 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:43:59,957 - logging_config - INFO - Connected to MySQL RDS.
+2024-12-11 12:44:00,168 - logging_config - INFO - CSV file loaded into a DataFrame successfully.
+2024-12-11 12:44:00,171 - logging_config - ERROR - Error occured: Length mismatch: Expected axis has 9 elements, new values have 6 elements
+2024-12-11 12:44:00,177 - logging_config - INFO - MySQL connection closed.
+2024-12-11 12:44:45,604 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:44:45,666 - logging_config - INFO - Connected to MySQL RDS.
+2024-12-11 12:44:45,707 - logging_config - INFO - CSV file loaded into a DataFrame successfully.
+2024-12-11 12:44:54,622 - logging_config - INFO - Data loaded successfully into the table 'products'.
+2024-12-11 12:44:54,625 - logging_config - INFO - MySQL connection closed.
+2024-12-11 12:45:47,120 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-11 12:45:49,166 - logging_config - INFO - Successfully executed query: SELECT COUNT(*) FROM customers
+2024-12-11 12:45:49,486 - logging_config - INFO - Successfully executed query: SELECT COUNT(*) FROM products
+2024-12-11 18:32:21,228 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-11 18:32:22,812 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-11 18:32:25,928 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum2
+                    FROM  DATA CATALOG
+                    DATABASE 'retail_db_redshift1'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    CREATE EXTERNAL DATABASE IF NOT EXISTS;
+                    
+2024-12-11 18:35:30,908 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-11 18:35:32,261 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-11 18:35:35,385 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum2
+                    FROM  DATA CATALOG
+                    DATABASE 'retail_db_redshift1'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    CREATE EXTERNAL DATABASE IF NOT EXISTS;
+                    
+2024-12-11 18:36:01,368 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-11 18:36:02,782 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-11 18:36:05,508 - logging_config - INFO - Error with exception: CREATE EXTERNAL DATABASE is not supported for remote MySQL schemas.
+
+2024-12-11 18:37:04,413 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-11 18:37:05,728 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-11 18:37:08,823 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries
+                    FROM MYSQL
+                    DATABASE 'retail_db_redshift'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    URI 'retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com'
+                    SECRET_ARN 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_secret-5i3srJ';
+                    
+2024-12-11 18:49:39,684 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-11 18:49:40,871 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-11 18:49:44,009 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries1
+                    FROM MYSQL
+                    DATABASE 'retail_db_redshift'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    URI 'retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com'
+                    SECRET_ARN 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_secret_for_redshift-my4WzL';
+                    
+2024-12-11 19:25:28,045 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-11 19:25:29,322 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-11 19:25:32,767 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries1
+                    FROM MYSQL
+                    DATABASE 'retail_db_redshift'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    URI 'retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com'
+                    SECRET_ARN 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_redshift_secret-dvud2L';
+                    
+2024-12-11 19:25:55,811 - logging_config - INFO - Secret redshift_secret retreived successfully
+2024-12-11 19:25:57,117 - logging_config - INFO - Secret redshift_db_secret retreived successfully
+2024-12-11 19:26:00,265 - logging_config - INFO - Successfully executed query: 
+                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries2
+                    FROM MYSQL
+                    DATABASE 'retail_db_redshift'
+                    IAM_ROLE 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+                    URI 'retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com'
+                    SECRET_ARN 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_redshift_secret-dvud2L';
+                    
