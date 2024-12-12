@@ -1,123 +1,219 @@
-import psycopg2
-from redshift_util import _describe_cluster
+from redshift_util import _describe_cluster, run_redshift_queries
 from secrets_util import get_secret
+from glue_util import create_glue_table
+from rds_mysql import describe_instance, run_mysql_queries, insert_data_into_table
 from logging_config import logger
 
-def run_queries(endpoint, db_name, user_name, password, queriy_list):
-    try:
-        conn = psycopg2.connect(host = endpoint,
-                            port = 5439,
-                            database = db_name,  
-                            user = user_name,
-                            password = password)
+if __name__ == "__main__":
+    '''
+    Getting the cluster endpoint
+    '''
+    redshift_cluster_identifier = 'retail-cluster'
+    response = _describe_cluster(redshift_cluster_identifier)
+    redshift_endpoint = response['Clusters'][0]['Endpoint']['Address']
 
-        cursor = conn.cursor()
+    '''
+    Getting redshift admin credentials
+    '''
+    redshift_cluster_secret_name = 'redshift_secret'
+    cluster_secret = get_secret(redshift_cluster_secret_name)
+    redshift_admin_user_name = cluster_secret['username']
+    redshift_admin_password = cluster_secret['password']
 
-        for query in queriy_list:
-            cursor.execute(query)
-            if query.strip().upper().startswith('SELECT'):
-                results = cursor.fetchall()
-                for row in results:
-                    print(row)
-            logger.info(f'Successfully executed query: {query}')
-        conn.commit()
+    '''
+    Getting redshift database user credentials
+    '''
+    redshift_db_secret_name = 'redshift_db_secret'
+    db_secret = get_secret(redshift_db_secret_name)
+    redshift_db_user_name = db_secret['username']
+    redshift_db_password = db_secret['password']
 
-    except Exception as e:
-        logger.info(f'Error with exception: {e}')
-    finally:
-        cursor.close()
-        conn.close()
+    '''
+    Creating a user with credentials and granting all previleges to the user
+    '''
+    redshift_db_name = 'retail_db'
+    redshift_default_database = 'dev'
+    redshift_admin_dev_query_list = [f"CREATE DATABASE {redshift_db_name};",
+                            f"CREATE USER {redshift_db_user_name} WITH PASSWORD '{redshift_db_password}';",
+                            f"GRANT ALL ON DATABASE {redshift_db_name} TO {redshift_db_user_name};"]
 
-cluster_identifier = 'retail-cluster'
+    # creating retail_db and retail_user by admin user connecting with default db
+    run_redshift_queries(redshift_endpoint, redshift_default_database, redshift_admin_user_name, redshift_admin_password, redshift_admin_dev_query_list)
 
-response = _describe_cluster(cluster_identifier)
-endpoint = response['Clusters'][0]['Endpoint']['Address']
+    '''
+    Creating the schema and setting up in search path
+    '''
+    redshift_db_name = 'retail_db'
+    redshift_schema_name = 'retail_schema'
+    redshift_admin_retail_db_queries = [f"CREATE SCHEMA {redshift_schema_name} AUTHORIZATION {redshift_db_user_name};",
+                                        f"GRANT SELECT ON ALL TABLES IN SCHEMA pg_catalog TO {redshift_db_user_name};",
+                                        f"SET search_path = '$user', public, {redshift_schema_name};"]
 
-redshift_cluster_secret_name = 'redshift_secret'
-cluster_secret = get_secret(redshift_cluster_secret_name)
-admin_user_name = cluster_secret['username']
-admin_password = cluster_secret['password']
+    # creating retail_schema by admin connecting with retail_db
+    run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_admin_user_name, redshift_db_password, redshift_admin_retail_db_queries) 
 
-redshift_db_secret_name = 'redshift_db_secret'
-db_secret = get_secret(redshift_db_secret_name)
-db_user_name = db_secret['username']
-db_password = db_secret['password']
-db_name = 'retail_db'
-default_database = 'dev'
+    '''
+    Creating redshift tables with diststyles
+    '''
+    redshift_create_table_queries = ['''CREATE TABLE retail_db.retail_schema.departments (
+                                        department_id INT NOT NULL,
+                                        department_name VARCHAR(45) NOT NULL,
+                                        PRIMARY KEY (department_id)
+                                        )DISTSTYLE ALL;'''
+                                    ,
+                                    '''CREATE TABLE retail_db.retail_schema.categories (
+                                                category_id INT NOT NULL,
+                                                category_department_id INT NOT NULL,
+                                                category_name VARCHAR(45) NOT NULL,
+                                                PRIMARY KEY (category_id)
+                                                )DISTSTYLE ALL; ''' 
+                                    ]
 
-# admin_dev_query_list = [f"CREATE DATABASE {db_name};",
-#                     f"CREATE USER {db_user_name} WITH PASSWORD '{db_password}';",
-#                     f"GRANT ALL ON DATABASE {db_name} TO {db_user_name};"]
-
-# # creating retail_db and retail_user by admin connecting with default db
-# run_queries(endpoint, default_database, admin_user_name, admin_password, admin_dev_query_list)    # connecting to default db with admin user
-
-# db_name = 'retail_db'
-schema_name = 'retail_schema'
-
-# admin_retail_db_queries = [f"CREATE SCHEMA {schema_name} AUTHORIZATION {db_user_name};",
-#                             f"GRANT SELECT ON ALL TABLES IN SCHEMA pg_catalog TO {db_user_name};",
-#                             f"SET search_path = '$user', public, {schema_name};"]
-
-# # creating retail_schema by admin connecting with retail_db
-# run_queries(endpoint, db_name, admin_user_name, db_password, admin_retail_db_queries)  # connecting to retail_db with admin user
-
-# create_table_queries = [ '''CREATE TABLE retail_db.retail_schema.departments (
-            #                         department_id INT NOT NULL,
-            #                         department_name VARCHAR(45) NOT NULL,
-            #                         PRIMARY KEY (department_id)
-            #                         )DISTSTYLE ALL;'''
-#                         ,
-#                         '''CREATE TABLE retail_db.retail_schema.categories (
-            #                         category_id INT NOT NULL,
-            #                         category_department_id INT NOT NULL,
-            #                         category_name VARCHAR(45) NOT NULL,
-            #                         PRIMARY KEY (category_id)
-            #                         )DISTSTYLE ALL
-            #; ''' ]
-
-# db_name = 'retail_db'
-# schema_name = 'retail_schema'
-# run_queries(endpoint, db_name, db_user_name, db_password, create_table_queries)  # connecting to retail_db with retail_user 
+    redshift_db_name = 'retail_db'
+    redshift_schema_name = 'retail_schema'
+    run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, redshift_create_table_queries)  # connecting to retail_db with retail_user 
 
 
-iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
+    '''
+    Running COPY commands to copy the data from s3 into redshift tables 
+    '''
+    redshift_iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
 
-# copy_cmds = [f'''
-#             COPY retail_db.retail_schema.departments
-#             FROM 's3://redshift-bucket-123/departments/part-00000'
-#             IAM_ROLE '{iam_role_arn}'
-#             FORMAT CSV
-#             ''',
-#             f'''
-#             COPY retail_db.retail_schema.categories
-#             FROM 's3://redshift-bucket-123/categories/part-00000'
-#             IAM_ROLE '{iam_role_arn}'
-#             FORMAT CSV
-#             ''']
-# run_queries(endpoint, db_name, db_user_name, db_password, copy_cmds)
+    redshift_copy_cmds = [f'''
+                            COPY retail_db.retail_schema.departments
+                            FROM 's3://redshift-bucket-123/departments/part-00000'
+                            IAM_ROLE '{redshift_iam_role_arn}'
+                            FORMAT CSV
+                            ''',
+                            f'''
+                            COPY retail_db.retail_schema.categories
+                            FROM 's3://redshift-bucket-123/categories/part-00000'
+                            IAM_ROLE '{redshift_iam_role_arn}'
+                            FORMAT CSV
+                            ''']
+    run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, redshift_copy_cmds)
 
-# spectrum_queries = [f'''
-#                     CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum2
-#                     FROM  DATA CATALOG
-#                     DATABASE 'retail_db_redshift1'
-#                     IAM_ROLE '{iam_role_arn}'
-#                     CREATE EXTERNAL DATABASE IF NOT EXISTS;
-#                     '''
+
+    '''
+    Creating glue tables for spectrum
+    '''
+    glue_database_name = 'retail_db_redshift1'     # as per the default redshift role ploicy resource arn by aws, the glue database name should contain the string redshift in it
+    glue_table_name = 'redshift_orders' # as per the default redshift role ploicy resource arn by aws, the glue table name should contain the string redshift in it
+    s3_path = 's3://redshift-bucket-123/landing/orders/'
+    clm_list = [{'Name': 'order_id','Type': 'INT'},
+                {'Name': 'order_date','Type': 'TIMESTAMP'},
+                {'Name': 'order_customer_id','Type': 'INT'},
+                {'Name': 'order_status','Type': 'STRING'}]
+
+    res = create_glue_table(glue_database_name, glue_table_name, clm_list, s3_path)
+
+    glue_table_name = 'redshift_order_items' # as per the default redshift role ploicy resource arn by aws, the glue table name should contain the string redshift in it
+    s3_path = 's3://redshift-bucket-123/landing/order_items/'
+    clm_list = [{'Name': 'order_item_id','Type': 'INT'},
+                {'Name': 'order_item_order_id','Type': 'INT'},
+                {'Name': 'order_item_product_id','Type': 'INT'},
+                {'Name': 'order_item_quantity','Type': 'INT'},
+                {'Name': 'order_item_subtotal','Type': 'FLOAT'},
+                {'Name': 'order_item_product_price','Type': 'FLOAT'}]
+
+    res = create_glue_table(glue_database_name, glue_table_name, clm_list, s3_path)
+
+    '''
+    Getting credentials for mysql db from secrets manager
+    '''
+    mysql_secret_name = 'rds_mysql_secret'
+    mysql_secret = get_secret(mysql_secret_name)
+    mysql_user_name = mysql_secret['username']
+    mysql_password = mysql_secret['password']
+
+    '''
+    Creating Mysql tables for federated queries
+    '''
+    db_instance_identifier = "retail-mysql-db"
+    res = describe_instance(db_instance_identifier)
+    mysql_endpoint = res['DBInstances'][0]['Endpoint']['Address']
+    # mysql_endpoint = "retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com"
+    mysql_db_name = "retail_db_redshift"
+
+    mysql_queriy_list  = [
+                    '''
+                    CREATE TABLE retail_db_redshift.products (
+                    product_id INT NOT NULL,
+                    product_category_id INT NOT NULL,
+                    product_name VARCHAR(45) NOT NULL,
+                    product_description VARCHAR(255) NOT NULL,
+                    product_price FLOAT NOT NULL,
+                    product_image VARCHAR(255) NOT NULL,
+                    PRIMARY KEY (product_id)
+                    );
+                    '''
+                    ,
+                    '''
+                    CREATE TABLE retail_db_redshift.customers (
+                    customer_id INT NOT NULL,
+                    customer_fname VARCHAR(45) NOT NULL,
+                    customer_lname VARCHAR(45) NOT NULL,
+                    customer_email VARCHAR(45) NOT NULL,
+                    customer_password VARCHAR(45) NOT NULL,
+                    customer_street VARCHAR(255) NOT NULL,
+                    customer_city VARCHAR(45) NOT NULL,
+                    customer_state VARCHAR(45) NOT NULL,
+                    customer_zipcode VARCHAR(45) NOT NULL,
+                    PRIMARY KEY (customer_id)
+                    ); '''
+                    ,
+                    'SHOW TABLES;'  # for validation
                     ]
+    run_mysql_queries(mysql_endpoint, mysql_db_name, mysql_user_name, mysql_password, mysql_queriy_list)
 
-# res = run_queries(endpoint, db_name, db_user_name, db_password, spectrum_queries)
+    '''
+    Inserting data into Mysql tables
+    '''
+    customers_file_path = '/home/bala/code/projects/redshift_project/data/retail_db/customers/part-00000'
+    mysql_table_name = "customers"
+    column_names = ["customer_id", "customer_fname", "customer_lname", "customer_email", "customer_password", "customer_street", "customer_city", "customer_state", "customer_zipcode"] 
 
-rds_endpoint = "retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com"
-rds_secret_arn = 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_redshift_secret-dvud2L'
+    insert_data_into_table(mysql_user_name, mysql_password, mysql_endpoint, mysql_db_name, customers_file_path, mysql_table_name, column_names)
 
-federated_queries = [f'''
-                    CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries2
-                    FROM MYSQL
-                    DATABASE 'retail_db_redshift'
-                    IAM_ROLE '{iam_role_arn}'
-                    URI '{rds_endpoint}'
-                    SECRET_ARN '{rds_secret_arn}';
-                    ''']
 
-res = run_queries(endpoint, db_name, db_user_name, db_password, federated_queries)
+    products_file_path = '/home/bala/code/projects/redshift_project/data/retail_db/products/part-00000'
+    mysql_table_name = "products"
+    column_names = ["product_id", "product_category_id", "product_name", "product_description", "product_price", "product_image"] 
+
+    insert_data_into_table(mysql_user_name, mysql_password, mysql_endpoint, mysql_db_name, products_file_path, mysql_table_name, column_names)
+
+    '''
+    Validating Mysql tables
+    '''
+    mysql_queriy_list = ['SELECT COUNT(*) FROM customers', 'SELECT COUNT(*) FROM products']
+    run_mysql_queries(mysql_endpoint, mysql_db_name, mysql_user_name, mysql_password, mysql_queriy_list)
+
+
+    '''
+    Creating external schema with glue data catalog for spectrum queries 
+    '''
+    external_schema_for_spectrum_queries = [f'''
+                                            CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_spectrum2
+                                            FROM  DATA CATALOG
+                                            DATABASE '{glue_database_name}'
+                                            IAM_ROLE '{redshift_iam_role_arn}'
+                                            CREATE EXTERNAL DATABASE IF NOT EXISTS;
+                                            '''
+                                            ]
+
+    res = run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, external_schema_for_spectrum_queries)
+
+    '''
+    Creating external schema with rds mysql db for federated queries 
+    '''
+    rds_secret_arn = 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_redshift_secret-dvud2L'
+    external_schema_for_federated_queries = [f'''
+                                            CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries2
+                                            FROM MYSQL
+                                            DATABASE '{mysql_db_name}'
+                                            IAM_ROLE '{redshift_iam_role_arn}'
+                                            URI '{mysql_endpoint}'
+                                            SECRET_ARN '{rds_secret_arn}';
+                                            ''']
+
+    res = run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, external_schema_for_federated_queries)

@@ -1,59 +1,98 @@
-from ec2_util import allocate_elastic_ip
+from ec2_util import allocate_elastic_ip, add_ip_to_security_group
 from iam_util import create_iam_role
-from secrets_util import create_redshift_secret, get_secret
-from redshift_util import (_create_cluster, add_ip_to_redshift_security_group, _describe_cluster, create_parameter_group, modify_parameter_group, 
-                           apply_parameter_group_to_cluster)
+from secrets_util import get_secret
+from redshift_util import _create_cluster, create_parameter_group, modify_parameter_group     
+from glue_util import create_glue_db
+from rds_mysql import create_rds_db, describe_instance
 import dotenv
 import os
 
-dotenv.load_dotenv()
+if __name__ == "__main__":
+    dotenv.load_dotenv()
 
-elastic_ip = allocate_elastic_ip()
+    '''
+    Creating elastic ip for the cluster for public availability
+    '''
+    elastic_ip = allocate_elastic_ip()
 
-parameter_group_name = 'retail-pg'
-parameter_group_family = 'redshift-1.0'
-description = 'Custom parameter group for retail-cluster'
-res = create_parameter_group(parameter_group_name, parameter_group_family, description)
-print(res)
+    '''
+    Creating a custem parameter group in order to modify the search path 
+    '''
+    parameter_group_name = 'retail-pg'
+    parameter_group_family = 'redshift-1.0'
+    description = 'Custom parameter group for retail-cluster'
+    res = create_parameter_group(parameter_group_name, parameter_group_family, description)
 
-search_path = '$user, public, retail_schema'
-res = modify_parameter_group(parameter_group_name, search_path)
-print(res)
+    '''
+    Setting up the search path with our schema
+    '''
+    search_path = '$user, public, retail_schema'
+    res = modify_parameter_group(parameter_group_name, search_path)
 
-# redshift_cluster_secret_name = 'redshift_secret'
-# redshift_cluster_secret_dict = os.environ.get('REDSHIFT_SECRET_DICT')
-# create_redshift_secret(redshift_cluster_secret_name, redshift_cluster_secret_dict)
+    '''
+    Creating IAM role for redshift with required permissions
+    '''
+    aws_managed_redshift_PolicyArn = 'arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess' # it has permissions for cloudwatch, glue, dynamodb,....
+    rds_policy_arn = 'arn:aws:iam::aws:policy/AmazonRDSFullAccess' # For federated queries, policy to access rds db. Its not there in the above policy.
+    policy_arn_list = [aws_managed_redshift_PolicyArn, rds_policy_arn]
+    iam_role_arn = create_iam_role(policy_arn_list)
 
-# role_arn = create_iam_role()
+    '''
+    Getting credentials from secret manager to set up cluster
+    '''
+    redshift_cluster_secret_name = 'redshift_secret'
+    cluster_secret = get_secret(redshift_cluster_secret_name)
+    cluster_user_name = cluster_secret['username']
+    cluster_password = cluster_secret['password']
 
-# cluster_secret = get_secret(redshift_cluster_secret_name)
-# cluster_user_name = cluster_secret['username']
-# cluster_password = cluster_secret['password']
+    '''
+    Creating the redshift cluster
+    '''
+    cluster_identifier = 'retail-cluster'
+    res = _create_cluster(parameter_group_name, cluster_identifier, elastic_ip, iam_role_arn, cluster_user_name, cluster_password)
 
-cluster_identifier = 'retail-cluster'
-elasticIP = '54.174.124.10'
-iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
-res = _create_cluster(parameter_group_name, cluster_identifier, elasticIP, iam_role_arn, cluster_user_name, cluster_password)
-print(res)
+    '''
+    Modifying the inbound rule of the cluster inorder to access from local
+    '''
+    security_group_id = res['Cluster']['VpcSecurityGroups'][0]['VpcSecurityGroupId']
+    ip_address = os.environ.get('IP_ADDRESS')
+    port = 5439
+    res = add_ip_to_security_group(security_group_id, ip_address, port)   # to access cluster from local
 
-# security_group_id = res['Cluster']['VpcSecurityGroups'][0]['VpcSecurityGroupId']
+    '''
+    Creating glue database for spectrum
+    '''
+    glue_database_name = 'retail_db_redshift1'     # as per the default redshift role ploicy resource arn by aws the glue database name should contain the string redshift in it
+    glue_database_description = "Database for redshift spectrum"
 
-# security_group_id = 'sg-03b4db065615f216b'
-# ip_address = os.environ.get('IP_ADDRESS')
-# res = add_ip_to_redshift_security_group(security_group_id, ip_address)
-# print(res)
+    res = create_glue_db(glue_database_name, glue_database_description)                
 
-# redshift_db_secret_name = 'redshift_db_secret'
-# redshift_db_secret_dict = os.environ.get('REDSHIFT_DB_SECRET_DICT')
-# create_redshift_secret(redshift_db_secret_name, redshift_db_secret_dict)
+    '''
+    Getting credentials for mysql db from secrets manager
+    '''
+    mysql_secret_name = 'rds_mysql_secret'
+    mysql_secret = get_secret(mysql_secret_name)
+    mysql_admin_user_name = mysql_secret['username']
+    mysql_admin_password = mysql_secret['password']
 
-# db_secret = get_secret(redshift_db_secret_name)
-# cluster_user_name = db_secret['username']
-# cluster_password = db_secret['password']
-# print(cluster_user_name)
-# print(cluster_password)
+    '''
+    Creating mysql instance in rds for federated queries
+    '''
+    db_instance_identifier = "retail-mysql-db"
+    mysql_db_name = "retail_db_redshift"
 
+    res = create_rds_db(db_instance_identifier, mysql_admin_user_name, mysql_admin_password, mysql_db_name)
 
+    '''
+    Getting instance details
+    '''
+    res = describe_instance(db_instance_identifier) 
+    security_group_id = res['DBInstances'][0]['VpcSecurityGroups'][0]['VpcSecurityGroupId']
 
-# res = apply_parameter_group_to_cluster(cluster_identifier, parameter_group_name)
-# print(res)                         
+    '''
+    Updating the inbound rule of the sequrity group to access from local
+    '''
+    # security_group_id = 'sg-03b4db065615f216b'
+    local_ip_address = os.environ.get('IP_ADDRESS')
+    mysql_port = 3306
+    res = add_ip_to_security_group(security_group_id, local_ip_address, mysql_port)

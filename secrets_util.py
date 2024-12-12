@@ -35,5 +35,5 @@ def get_secret(secret_name):
         logger.info(f'Secret {secret_name} retreived successfully')
         return secret
     except Exception as e:
-        logger.exception("Failed to retrieve secret")
+        logger.exception(f"Failed to retrieve secret {e}")
         raise e

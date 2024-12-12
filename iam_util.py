@@ -3,7 +3,7 @@ import json
 import time
 from logging_config import logger
 
-def create_iam_role():
+def create_iam_role(policy_arn_list):
     iam_client = boto3.client('iam')
 
     assume_role_policy = {
@@ -37,10 +37,11 @@ def create_iam_role():
 
     # Attach the existing policy to the role
     try:
-        iam_client.attach_role_policy(
-            RoleName='Redshift_All_Commands_Access_Role',
-            PolicyArn='arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess'
-        )
+        for policy_arn in policy_arn_list:
+            iam_client.attach_role_policy(
+                        RoleName='Redshift_All_Commands_Access_Role',
+                        PolicyArn=policy_arn
+                    )
         logger.info('Policy successfully attached to the role')
 
     except Exception as e:
