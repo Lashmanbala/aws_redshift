@@ -26,7 +26,9 @@ To set up and deploy this solution, follow these steps:
 
    Configure your AWS credentials on your host machine to authenticate with AWS.
    
-   And create a .env file like sample.env file with your values
+   Create required credentials in secrets manager for redshift cluster, redshift database and for mysql database.
+
+   Create an s3 bucket and upload the files
 
 3. **Create .env file :**
 
