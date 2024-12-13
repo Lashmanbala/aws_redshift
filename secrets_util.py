@@ -33,7 +33,12 @@ def get_secret(secret_name):
         corrected_secret_string = raw_secret_string.strip('"').replace("'", '"')
         secret = json.loads(corrected_secret_string)
         logger.info(f'Secret {secret_name} retreived successfully')
-        return secret
+        secret_arn = response['ARN']
+        return secret, secret_arn
     except Exception as e:
         logger.exception(f"Failed to retrieve secret {e}")
         raise e
+    
+# res = get_secret('rds_mysql_secret')
+# secret_value = res[0]
+# secret_arn = res[1]
