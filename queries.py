@@ -3,8 +3,11 @@ from secrets_util import get_secret
 from glue_util import create_glue_table
 from rds_mysql import describe_instance, run_mysql_queries, insert_data_into_table
 from logging_config import logger
+import dotenv
+import os
 
 if __name__ == "__main__":
+    dotenv.load_dotenv()
     '''
     Getting the cluster endpoint
     '''
@@ -15,16 +18,16 @@ if __name__ == "__main__":
     '''
     Getting redshift admin credentials
     '''
-    redshift_cluster_secret_name = 'redshift_secret'
-    cluster_secret = get_secret(redshift_cluster_secret_name)
+    redshift_cluster_secret_name = os.environ.get('REDSHIFT_CLUSTER_SECRET_NAME')
+    cluster_secret = get_secret(redshift_cluster_secret_name)[0]
     redshift_admin_user_name = cluster_secret['username']
     redshift_admin_password = cluster_secret['password']
 
     '''
     Getting redshift database user credentials
     '''
-    redshift_db_secret_name = 'redshift_db_secret'
-    db_secret = get_secret(redshift_db_secret_name)
+    redshift_db_secret_name = os.environ.get('REDSHIFT_DB_SECRET_NAME')
+    db_secret = get_secret(redshift_db_secret_name)[0]
     redshift_db_user_name = db_secret['username']
     redshift_db_password = db_secret['password']
 
@@ -77,17 +80,19 @@ if __name__ == "__main__":
     '''
     Running COPY commands to copy the data from s3 into redshift tables 
     '''
-    redshift_iam_role_arn = 'arn:aws:iam::585768170668:role/Redshift_All_Commands_Access_Role'
-
+    redshift_iam_role_arn = os.environ.get('REDSHIFT_IAM_ROLE_ARN') # Its been set in app.py file
+    redshift_iam_role_arn = os.environ.get('REDSHIFT_IAM_ROLE_ARN')
+    departments_s3_path = os.environ.get('DEPARTMENTS_S3_PATH')
+    categories_s3_path = os.environ.get('CATEGORIES_S3_PATH')
     redshift_copy_cmds = [f'''
                             COPY retail_db.retail_schema.departments
-                            FROM 's3://redshift-bucket-123/departments/part-00000'
+                            FROM '{departments_s3_path}'
                             IAM_ROLE '{redshift_iam_role_arn}'
                             FORMAT CSV
                             ''',
                             f'''
                             COPY retail_db.retail_schema.categories
-                            FROM 's3://redshift-bucket-123/categories/part-00000'
+                            FROM '{categories_s3_path}'
                             IAM_ROLE '{redshift_iam_role_arn}'
                             FORMAT CSV
                             ''']
@@ -99,16 +104,16 @@ if __name__ == "__main__":
     '''
     glue_database_name = 'retail_db_redshift1'     # as per the default redshift role ploicy resource arn by aws, the glue database name should contain the string redshift in it
     glue_table_name = 'redshift_orders' # as per the default redshift role ploicy resource arn by aws, the glue table name should contain the string redshift in it
-    s3_path = 's3://redshift-bucket-123/landing/orders/'
+    orders_s3_path = os.environ.get('ORDERS_S3_PATH')
     clm_list = [{'Name': 'order_id','Type': 'INT'},
                 {'Name': 'order_date','Type': 'TIMESTAMP'},
                 {'Name': 'order_customer_id','Type': 'INT'},
                 {'Name': 'order_status','Type': 'STRING'}]
 
-    res = create_glue_table(glue_database_name, glue_table_name, clm_list, s3_path)
+    res = create_glue_table(glue_database_name, glue_table_name, clm_list, orders_s3_path)
 
     glue_table_name = 'redshift_order_items' # as per the default redshift role ploicy resource arn by aws, the glue table name should contain the string redshift in it
-    s3_path = 's3://redshift-bucket-123/landing/order_items/'
+    order_items_s3_path = os.environ.get('ORDER_ITEMS_S3_PATH')
     clm_list = [{'Name': 'order_item_id','Type': 'INT'},
                 {'Name': 'order_item_order_id','Type': 'INT'},
                 {'Name': 'order_item_product_id','Type': 'INT'},
@@ -116,13 +121,13 @@ if __name__ == "__main__":
                 {'Name': 'order_item_subtotal','Type': 'FLOAT'},
                 {'Name': 'order_item_product_price','Type': 'FLOAT'}]
 
-    res = create_glue_table(glue_database_name, glue_table_name, clm_list, s3_path)
+    res = create_glue_table(glue_database_name, glue_table_name, clm_list, order_items_s3_path)
 
     '''
     Getting credentials for mysql db from secrets manager
     '''
-    mysql_secret_name = 'rds_mysql_secret'
-    mysql_secret = get_secret(mysql_secret_name)
+    mysql_secret_name = os.environ.get('MYSQL_SECRET_NAME')
+    mysql_secret = get_secret(mysql_secret_name)[0]
     mysql_user_name = mysql_secret['username']
     mysql_password = mysql_secret['password']
 
@@ -169,14 +174,13 @@ if __name__ == "__main__":
     '''
     Inserting data into Mysql tables
     '''
-    customers_file_path = '/home/bala/code/projects/redshift_project/data/retail_db/customers/part-00000'
+    customers_file_path = os.environ.get('CUSTOMERS_LOCAL_FILE_PATH')
     mysql_table_name = "customers"
     column_names = ["customer_id", "customer_fname", "customer_lname", "customer_email", "customer_password", "customer_street", "customer_city", "customer_state", "customer_zipcode"] 
 
     insert_data_into_table(mysql_user_name, mysql_password, mysql_endpoint, mysql_db_name, customers_file_path, mysql_table_name, column_names)
 
-
-    products_file_path = '/home/bala/code/projects/redshift_project/data/retail_db/products/part-00000'
+    products_file_path = os.environ.get('PRODUCTS_LOCAL_FILE_PATH')
     mysql_table_name = "products"
     column_names = ["product_id", "product_category_id", "product_name", "product_description", "product_price", "product_image"] 
 
@@ -206,7 +210,8 @@ if __name__ == "__main__":
     '''
     Creating external schema with rds mysql db for federated queries 
     '''
-    rds_secret_arn = 'arn:aws:secretsmanager:us-east-1:585768170668:secret:rds_mysql_redshift_secret-dvud2L'
+    mysql_secret_name = 'rds_mysql_secret'
+    rds_secret_arn = get_secret(mysql_secret_name)[1]
     external_schema_for_federated_queries = [f'''
                                             CREATE EXTERNAL SCHEMA IF NOT EXISTS retail_federated_queries2
                                             FROM MYSQL

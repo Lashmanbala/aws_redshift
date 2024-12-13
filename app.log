@@ -395,3 +395,5 @@ connection to server at "retail-cluster.czbbpdfkkega.us-east-1.redshift.amazonaw
                     ORDER BY 5 DESC, 1 ASC
                     LIMIT 10
                     
+2024-12-13 07:54:33,694 - logging_config - INFO - Secret rds_mysql_secret retreived successfully
+2024-12-13 07:55:34,183 - logging_config - INFO - Secret rds_mysql_secret retreived successfully

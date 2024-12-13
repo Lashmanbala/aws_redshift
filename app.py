@@ -26,7 +26,8 @@ if __name__ == "__main__":
     '''
     Setting up the search path with our schema
     '''
-    search_path = '$user, public, retail_schema'
+    schema_name = 'retail_schema'
+    search_path = f"$user, public, '{schema_name}'"
     res = modify_parameter_group(parameter_group_name, search_path)
 
     '''
@@ -36,12 +37,13 @@ if __name__ == "__main__":
     rds_policy_arn = 'arn:aws:iam::aws:policy/AmazonRDSFullAccess' # For federated queries, policy to access rds db. Its not there in the above policy.
     policy_arn_list = [aws_managed_redshift_PolicyArn, rds_policy_arn]
     iam_role_arn = create_iam_role(policy_arn_list)
+    os.environ.setdefault('REDSHIFT_IAM_ROLE_ARN', f'{iam_role_arn}') # to be accessed in queries.py file
 
     '''
     Getting credentials from secret manager to set up cluster
     '''
-    redshift_cluster_secret_name = 'redshift_secret'
-    cluster_secret = get_secret(redshift_cluster_secret_name)
+    redshift_cluster_secret_name = os.environ.get('REDSHIFT_CLUSTER_SECRET_NAME')
+    cluster_secret = get_secret(redshift_cluster_secret_name)[0]
     cluster_user_name = cluster_secret['username']
     cluster_password = cluster_secret['password']
 
@@ -70,8 +72,8 @@ if __name__ == "__main__":
     '''
     Getting credentials for mysql db from secrets manager
     '''
-    mysql_secret_name = 'rds_mysql_secret'
-    mysql_secret = get_secret(mysql_secret_name)
+    mysql_secret_name = os.environ.get('MYSQL_SECRET_NAME')
+    mysql_secret = get_secret(mysql_secret_name)[0]
     mysql_admin_user_name = mysql_secret['username']
     mysql_admin_password = mysql_secret['password']
 
