@@ -7,9 +7,9 @@ from rds_mysql import create_rds_db, describe_instance
 import dotenv
 import os
 
-if __name__ == "__main__":
-    dotenv.load_dotenv()
-
+def redshift(): 
+    ''' This function takes care of redshift related actions '''
+    
     '''
     Creating elastic ip for the cluster for public availability
     '''
@@ -61,14 +61,20 @@ if __name__ == "__main__":
     port = 5439
     res = add_ip_to_security_group(security_group_id, ip_address, port)   # to access cluster from local
 
+def glue():
+    ''' This function takes care of aws glue related actions '''
+    
     '''
     Creating glue database for spectrum
     '''
     glue_database_name = 'retail_db_redshift1'     # as per the default redshift role ploicy resource arn by aws the glue database name should contain the string redshift in it
     glue_database_description = "Database for redshift spectrum"
 
-    res = create_glue_db(glue_database_name, glue_database_description)                
+    res = create_glue_db(glue_database_name, glue_database_description) 
 
+def rds_mysql():
+    ''' This function takes care of aws rds related actions '''
+    
     '''
     Getting credentials for mysql db from secrets manager
     '''
@@ -98,3 +104,16 @@ if __name__ == "__main__":
     local_ip_address = os.environ.get('IP_ADDRESS')
     mysql_port = 3306
     res = add_ip_to_security_group(security_group_id, local_ip_address, mysql_port)
+
+
+def main():
+    redshift() 
+    glue()
+    rds_mysql()
+
+
+if __name__ == "__main__":
+
+    dotenv.load_dotenv()   # loading environment variables
+
+    main()

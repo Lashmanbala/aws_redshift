@@ -6,13 +6,13 @@ from logging_config import logger
 import dotenv
 import os
 
-if __name__ == "__main__":
-    dotenv.load_dotenv()
+def redshift_queries():
     '''
     Getting the cluster endpoint
     '''
     redshift_cluster_identifier = 'retail-cluster'
     response = _describe_cluster(redshift_cluster_identifier)
+    global redshift_endpoint
     redshift_endpoint = response['Clusters'][0]['Endpoint']['Address']
 
     '''
@@ -28,12 +28,15 @@ if __name__ == "__main__":
     '''
     redshift_db_secret_name = os.environ.get('REDSHIFT_DB_SECRET_NAME')
     db_secret = get_secret(redshift_db_secret_name)[0]
+    global redshift_db_user_name
     redshift_db_user_name = db_secret['username']
+    global redshift_db_password
     redshift_db_password = db_secret['password']
 
     '''
     Creating a user with credentials and granting all previleges to the user
     '''
+    global redshift_db_name
     redshift_db_name = 'retail_db'
     redshift_default_database = 'dev'
     redshift_admin_dev_query_list = [f"CREATE DATABASE {redshift_db_name};",
@@ -80,8 +83,8 @@ if __name__ == "__main__":
     '''
     Running COPY commands to copy the data from s3 into redshift tables 
     '''
+    global redshift_iam_role_arn
     redshift_iam_role_arn = os.environ.get('REDSHIFT_IAM_ROLE_ARN') # Its been set in app.py file
-    redshift_iam_role_arn = os.environ.get('REDSHIFT_IAM_ROLE_ARN')
     departments_s3_path = os.environ.get('DEPARTMENTS_S3_PATH')
     categories_s3_path = os.environ.get('CATEGORIES_S3_PATH')
     redshift_copy_cmds = [f'''
@@ -99,9 +102,11 @@ if __name__ == "__main__":
     run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, redshift_copy_cmds)
 
 
+def glue_queries():
     '''
     Creating glue tables for spectrum
     '''
+    global glue_database_name
     glue_database_name = 'retail_db_redshift1'     # as per the default redshift role ploicy resource arn by aws, the glue database name should contain the string redshift in it
     glue_table_name = 'redshift_orders' # as per the default redshift role ploicy resource arn by aws, the glue table name should contain the string redshift in it
     orders_s3_path = os.environ.get('ORDERS_S3_PATH')
@@ -123,6 +128,7 @@ if __name__ == "__main__":
 
     res = create_glue_table(glue_database_name, glue_table_name, clm_list, order_items_s3_path)
 
+def mysql_queries():
     '''
     Getting credentials for mysql db from secrets manager
     '''
@@ -136,8 +142,10 @@ if __name__ == "__main__":
     '''
     db_instance_identifier = "retail-mysql-db"
     res = describe_instance(db_instance_identifier)
+    global mysql_endpoint
     mysql_endpoint = res['DBInstances'][0]['Endpoint']['Address']
     # mysql_endpoint = "retail-mysql-db.cj8gyayqy4pf.us-east-1.rds.amazonaws.com"
+    global mysql_db_name
     mysql_db_name = "retail_db_redshift"
 
     mysql_queriy_list  = [
@@ -192,7 +200,7 @@ if __name__ == "__main__":
     mysql_queriy_list = ['SELECT COUNT(*) FROM customers', 'SELECT COUNT(*) FROM products']
     run_mysql_queries(mysql_endpoint, mysql_db_name, mysql_user_name, mysql_password, mysql_queriy_list)
 
-
+def redshift_copy_commands():
     '''
     Creating external schema with glue data catalog for spectrum queries 
     '''
@@ -223,6 +231,8 @@ if __name__ == "__main__":
 
     res = run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, external_schema_for_federated_queries)
 
+
+def validate_redshift():
     '''
     Validating Spectrum and federated:
         Get order count per customer for the month of 2014 jan.
@@ -247,3 +257,18 @@ if __name__ == "__main__":
                   ]
 
     run_redshift_queries(redshift_endpoint, redshift_db_name, redshift_db_user_name, redshift_db_password, join_query)
+
+
+def main():
+    redshift_queries()
+    glue_queries()
+    mysql_queries()
+    redshift_copy_commands()
+    validate_redshift()
+
+
+if __name__ == "__main__":
+
+    dotenv.load_dotenv()
+
+    main()
